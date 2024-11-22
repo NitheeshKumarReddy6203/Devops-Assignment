@@ -1,0 +1,9 @@
+Resources:
+  MyLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Role: arn:aws:iam::156041404525:role/ItsForDevopsAssignmnetLambda
+      FunctionName: MyCalculatorFunction
+      Runtime: python3.8
+      CodeUri: src/
