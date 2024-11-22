@@ -1,12 +1,12 @@
 pipeline {
     agent { docker { image 'python:3.9' } }
     environment {
-        AWS_DEFAULT_REGION = 'us-east-1'
+        AWS_DEFAULT_REGION = 'ap-south-1'
     }
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/your-repo/calculator-app.git'
+                git 'https://github.com/NitheeshKumarReddy6203/Devops-Assignment.git'
             }
         }
         stage('Setup Virtual Environment') {
