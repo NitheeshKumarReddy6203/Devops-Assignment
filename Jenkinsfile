@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/NitheeshKumarReddy6203/Devops-Assignment.git'
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'CredsTemp', url: 'https://github.com/NitheeshKumarReddy6203/Devops-Assignment.git']])
             }
         }
         stage('Setup Virtual Environment') {
