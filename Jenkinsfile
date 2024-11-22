@@ -1,41 +1,46 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.9-slim' // Use Docker image with Python pre-installed
-        }
+    agent { docker { image 'python:3.9' } }
+    environment {
+        AWS_DEFAULT_REGION = 'us-east-1'
     }
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/NitheeshKumarReddy6203/Devops-Assignment.git'
+                git 'https://github.com/your-repo/calculator-app.git'
             }
         }
-        stage('Install Requirements') {
+        stage('Setup Virtual Environment') {
             steps {
-                dir('infrastructure') {
-                    sh 'pip install -r requirements.txt'
-                }
+                sh '''
+                python3 -m venv venv
+                . venv/bin/activate
+                pip install --upgrade pip
+                pip install -r requirements.txt
+                '''
             }
         }
         stage('Run Unit Tests') {
             steps {
-                dir('calculator-app') {
-                    sh 'python -m unittest discover -s tests'
-                }
+                sh '''
+                . venv/bin/activate
+                python3 -m unittest discover -s tests
+                '''
             }
         }
-        stage('Build Lambda Package') {
+        stage('Package') {
             steps {
-                dir('calculator-app') {
-                    sh 'zip -r lambda_function.zip src'
-                }
+                sh '''
+                . venv/bin/activate
+                sam build
+                '''
             }
         }
-        stage('Deploy to AWS') {
+        stage('Deploy') {
             steps {
-                dir('infrastructure') {
-                    sh 'sam deploy --template-file template.yaml --stack-name calculator-stack --capabilities CAPABILITY_IAM'
-                }
+                sh '''
+                . venv/bin/activate
+                sam deploy --no-confirm-changeset
+                '''
             }
         }
     }
