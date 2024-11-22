@@ -1,33 +1,40 @@
 pipeline {
-    agent any
-    
+    agent {
+        docker {
+            image 'python:3.9-slim' // Use Docker image with Python pre-installed
+        }
+    }
     stages {
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
-                checkout scm  // Pulls the repository and Jenkinsfile from the configured Git repository
+                git branch: 'main', url: 'https://github.com/NitheeshKumarReddy6203/Devops-Assignment.git'
             }
         }
-
-        stage('Install Dependencies') {
+        stage('Install Requirements') {
             steps {
-                script {
+                dir('infrastructure') {
                     sh 'pip install -r requirements.txt'
                 }
             }
         }
-
-        stage('Run Tests') {
+        stage('Run Unit Tests') {
             steps {
-                script {
+                dir('calculator-app') {
                     sh 'python -m unittest discover -s tests'
                 }
             }
         }
-
+        stage('Build Lambda Package') {
+            steps {
+                dir('calculator-app') {
+                    sh 'zip -r lambda_function.zip src'
+                }
+            }
+        }
         stage('Deploy to AWS') {
             steps {
-                script {
-                    sh 'aws cloudformation deploy --template-file infrastructure/template.yaml --stack-name my-stack --region $AWS_REGION'
+                dir('infrastructure') {
+                    sh 'sam deploy --template-file template.yaml --stack-name calculator-stack --capabilities CAPABILITY_IAM'
                 }
             }
         }
