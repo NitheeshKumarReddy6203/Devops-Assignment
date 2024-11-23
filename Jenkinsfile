@@ -1,9 +1,12 @@
 pipeline {
-    agent any
-    // { docker { image 'python:3.9' } }
-    // environment {
-    //     AWS_DEFAULT_REGION = 'ap-south-1'
-    // }
+    agent {
+    docker {
+        image 'python:3.9'
+    }
+    }
+    environment {
+        AWS_DEFAULT_REGION = 'ap-south-1'
+    }
     stages {
         stage('Checkout') {
             steps {
