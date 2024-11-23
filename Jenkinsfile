@@ -10,6 +10,13 @@ pipeline {
                 checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'CredsTemp', url: 'https://github.com/NitheeshKumarReddy6203/Devops-Assignment.git']])
             }
         }
+        stage('Hello World!') {
+            steps {
+                echo "Hello World!"
+            }
+        }
+
+        
         // stage('Setup Virtual Environment') {
         //     steps {
         //         sh '''
