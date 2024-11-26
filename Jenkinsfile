@@ -1,11 +1,11 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.9-slim' // Use Python 3.9 Docker image
-        }
-    }
+    agent any
     environment {
-        PIP_CACHE_DIR = "${WORKSPACE}/.pip_cache" // Cache pip installations
+        
+        AWS_REGION = 'ap-south-1'   
+        ECR_REPO = 'my-calculator-app'
+        AWS_ACCOUNT_ID = '156041404525' 
+        ECR_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}"
     }
     stages {
         stage('Checkout Code') {
@@ -13,21 +13,27 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/NitheeshKumarReddy6203/Devops-Assignment.git'
             }
         }
-        stage('Install Tools') {
+        stage('Build Docker Image') {
             steps {
-                sh '''
-                apt-get update
-                apt-get install -y zip unzip awscli
-                '''
+                script {
+                    docker.build("my-calculator-app:latest")
+                }
             }
         }
-        stage('Install Requirements') {
+        stage('Authenticate to AWS ECR') {
             steps {
-                dir('infrastructure') {
-                    sh '''
-                    mkdir -p $PIP_CACHE_DIR
-                    pip install --cache-dir $PIP_CACHE_DIR -r requirements.txt
-                    '''
+                script {
+
+                    sh """
+                    aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_URI}
+                    """
+                }
+            }
+        }
+        stage('Push Docker Image to ECR') {
+            steps {
+                script {
+                    docker.image("my-calculator-app:latest").push()
                 }
             }
         }
@@ -41,32 +47,16 @@ pipeline {
         stage('Build Lambda Package') {
             steps {
                 dir('calculator-app') {
-                    sh '''
-                    mkdir -p build
-                    zip -r build/lambda_function.zip src
-                    '''
+                    sh 'zip -r lambda_function.zip src'
                 }
             }
         }
         stage('Deploy to AWS') {
             steps {
                 dir('infrastructure') {
-                    sh '''
-                    aws configure set aws_access_key_id YOUR_ACCESS_KEY
-                    aws configure set aws_secret_access_key YOUR_SECRET_KEY
-                    aws configure set default.region ap-south-1
-                    sam deploy --template-file template.yaml --stack-name calculator-stack --capabilities CAPABILITY_IAM
-                    '''
+                    sh 'sam deploy --template-file template.yaml --stack-name calculator-stack --capabilities CAPABILITY_IAM'
                 }
             }
-        }
-    }
-    post {
-        always {
-            echo 'Pipeline execution completed.'
-        }
-        failure {
-            echo 'Pipeline failed. Check logs for details.'
         }
     }
 }
