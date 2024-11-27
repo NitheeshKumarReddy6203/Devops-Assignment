@@ -4,6 +4,8 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'python:3.9-slim'
         AWS_REGION = 'ap-south-1'  // Update with your region
+        ECR_REPOSITORY = '156041404525.dkr.ecr.ap-south-1.amazonaws.com/calculator-app' // Replace with your ECR repository URL
+        IMAGE_TAG = "latest"  // You can dynamically create this, like using build number or commit ID
     }
 
     stages {
@@ -30,6 +32,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
+                    // Build Docker image
                     docker.build("calculator-app", "-f Dockerfile .")
                 }
             }
@@ -42,6 +45,29 @@ pipeline {
                         sh 'pip install -r requirements/requirements.txt'
                         sh 'pytest --maxfail=1 --disable-warnings -q'
                     }
+                }
+            }
+        }
+
+        stage('Login to AWS ECR') {
+            steps {
+                script {
+                    // Authenticate Docker to AWS ECR
+                    sh """
+                    aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPOSITORY}
+                    """
+                }
+            }
+        }
+
+        stage('Tag and Push Docker Image to ECR') {
+            steps {
+                script {
+                    // Tag the Docker image
+                    sh "docker tag calculator-app:latest ${ECR_REPOSITORY}:${IMAGE_TAG}"
+                    
+                    // Push Docker image to ECR
+                    sh "docker push ${ECR_REPOSITORY}:${IMAGE_TAG}"
                 }
             }
         }
