@@ -22,12 +22,18 @@ pipeline {
                 sh 'pip install -r infrastructure/requirements.txt'
             }
         }
-
         stage('Run Tests') {
             steps {
-                sh 'pytest tests/ --junitxml=results.xml'
+                sh '~/.local/bin/pytest tests/ --junitxml=results.xml'
             }
         }
+
+
+        // stage('Run Tests') {
+        //     steps {
+        //         sh 'pytest tests/ --junitxml=results.xml'
+        //     }
+        // }
 
         stage('Build Docker Image') {
             steps {
