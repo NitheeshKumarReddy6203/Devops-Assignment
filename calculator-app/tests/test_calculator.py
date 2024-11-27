@@ -1,8 +1,7 @@
 import sys
 import os
 import unittest
-sys.path.append('/var/lib/jenkins/workspace/Devops-Assignment/calculator-app/src')
-import calculator
+from ..src import calculator
 
 # Import the functions
 from calculator import add, subtract, multiply
