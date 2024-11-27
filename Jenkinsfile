@@ -10,7 +10,7 @@ pipeline {
         // Stage for checking out the code from GitHub repository
         stage('Checkout Code') {
             steps {
-                git url: 'https://github.com/your-username/DEVOPS-TEST.git', branch: 'main'
+                git url: 'https://github.com/NitheeshKumarReddy6203/Devops-Assignment.git', branch: 'main'
             }
         }
 
