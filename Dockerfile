@@ -1,10 +1,11 @@
-FROM python:3.9-slim
+# Use AWS Lambda Python 3.9 runtime as the base image
+FROM public.ecr.aws/lambda/python:3.9
 
-# Set the working directory in the container
-WORKDIR /app
+# Copy application files
+COPY . ${LAMBDA_TASK_ROOT}
 
-# Copy all files from the current directory to the container's /app directory
-COPY calculator.py /app
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Set the default command to run the application (adjust as needed)
-CMD ["python", "calculator.py"]
+# Set the Lambda handler
+CMD ["calculator.lambda_handler"]
