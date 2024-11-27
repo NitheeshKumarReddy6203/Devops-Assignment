@@ -5,7 +5,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    sh '#!/bin/sh'
+                    sh '#!/bin/bash'
                     sh 'echo $SHELL'
                     sh 'cd calculator-app && echo "Now inside calculator-app"'
                     sh 'ls -l'
