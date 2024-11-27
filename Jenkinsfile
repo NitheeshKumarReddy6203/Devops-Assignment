@@ -1,33 +1,43 @@
 pipeline {
     agent any
-
+    environment {
+        AWS_REGION = 'ap-south-1' 
+    }
     stages {
-        stage('Run Tests') {
-            steps {
-                script {
-                    sh '#!/bin/bash'
-                    sh 'pytest test_calculator.py'
-                }
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build Docker image
-                    sh 'docker build -t calculator-app -f Dockerfile .'
+                    def imageTag = "my-app:${BUILD_NUMBER}"
+                    echo "Building Docker image with tag: ${imageTag}"
+                    sh "docker build -t ${imageTag} ."
                 }
             }
         }
-    }
-
-    post {
-        success {
-            echo 'Build and tests completed successfully.'
+        
+        stage('Run Unit Tests') {
+            steps {
+                script {
+                    echo "Running unit tests..."
+                    sh "python3 -m unittest discover tests"
+                }
+            }
         }
-
+        
+        stage('Echo Success') {
+            steps {
+                echo "Pipeline executed successfully up to unit tests."
+            }
+        }
+    }
+    post {
+        always {
+            echo 'Pipeline finished.'
+        }
+        success {
+            echo 'Pipeline completed successfully.'
+        }
         failure {
-            echo 'Build or tests failed.'
+            echo 'Pipeline failed.'
         }
     }
 }
