@@ -2,20 +2,22 @@ pipeline {
     agent any
 
     environment {
-        AWS_DEFAULT_REGION = 'ap-south-1' 
-        REPO_NAME = 'my-calculator-app' 
-        IMAGE_TAG = "${env.BUILD_NUMBER}" 
-        AWS_ACCOUNT_ID = '156041404525' 
+        AWS_REGION = 'ap-south-1'  // Replace with your region
+        ECR_REPO_URI = '156041404525.dkr.ecr.ap-south-1.amazonaws.com/my-calculator-repo'  // Replace with your ECR repo URI
+        IMAGE_NAME = 'my-calculator-app'  // Replace with your Docker image name
     }
 
     stages {
-        stage('Run Unit Tests') {
+        stage('Login to ECR') {
             steps {
                 script {
-                    sh '''
-                        # Run unit tests
-                        python3 -m unittest discover -s . -p "test_calculator.py"
-                    '''
+                    // Use Jenkins credentials for AWS access
+                    withCredentials([usernamePassword(credentialsId: 'aws-credentials-id', passwordVariable: 'sj2cRH8wJlXzorxQGT3qRkvXJZZcP5Csfygv8JPE', usernameVariable: 'AKIASIVGK4BW7JZ5KKHO')]) {
+                        // Get ECR login password and authenticate Docker to the ECR registry
+                        sh """
+                            aws ecr get-login-password --region ${AWS_REGION} --access-key ${AWS_ACCESS_KEY} --secret-key ${AWS_SECRET_KEY} | docker login --username AWS --password-stdin ${ECR_REPO_URI}
+                        """
+                    }
                 }
             }
         }
@@ -23,18 +25,17 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    withAWS(credentials: 'ecr-creds') {
-                        sh '''
-                            # Authenticate Docker with ECR
-                            aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+                    // Build Docker image
+                    sh "docker build -t ${IMAGE_NAME} ."
+                }
+            }
+        }
 
-                            # Build Docker image
-                            docker build -t $REPO_NAME:$IMAGE_TAG .
-
-                            # Tag Docker image for ECR
-                            docker tag $REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG
-                        '''
-                    }
+        stage('Tag Docker Image') {
+            steps {
+                script {
+                    // Tag Docker image with the ECR repository URI
+                    sh "docker tag ${IMAGE_NAME}:latest ${ECR_REPO_URI}:${BUILD_NUMBER}"
                 }
             }
         }
@@ -42,38 +43,17 @@ pipeline {
         stage('Push Docker Image to ECR') {
             steps {
                 script {
-                   withAWS(credentials: 'ecr-creds') {
-                        sh '''
-                            # Push Docker image to ECR
-                            docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG
-                        '''
-                    }
-                }
-            }
-        }
-
-        stage('Update SAM Template') {
-            steps {
-                script {
-                    // Replace the image URI in SAM template
-                    sh '''
-                        # Replace the image URI in SAM template
-                        sed -i "s|<IMAGE_URI>|$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG|g" infrastructure/template.yaml
-
-                        # Display updated SAM template for verification
-                        cat infrastructure/template.yaml
-                    '''
+                    // Push the Docker image to the ECR repository
+                    sh "docker push ${ECR_REPO_URI}:${BUILD_NUMBER}"
                 }
             }
         }
     }
 
     post {
-        success {
-            echo 'Pipeline executed successfully!'
-        }
-        failure {
-            echo 'Pipeline execution failed!'
+        always {
+            // Cleanup: Logout from Docker registry
+            sh 'docker logout'
         }
     }
 }
