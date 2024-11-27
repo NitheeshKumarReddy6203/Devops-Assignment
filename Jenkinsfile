@@ -5,9 +5,9 @@ pipeline {
         AWS_ACCESS_KEY_ID = 'AKIASIVGK4BW7JZ5KKHO'       // Replace with your AWS access key
         AWS_SECRET_ACCESS_KEY = 'sj2cRH8wJlXzorxQGT3qRkvXJZZcP5Csfygv8JPE' // Replace with your AWS secret key
         AWS_DEFAULT_REGION = 'ap-south-1'              // Replace with your AWS region
-        AWS_ACCOUNT_ID = '156041404525'        // Replace with your AWS Account ID
-        REPO_NAME = 'my-calculator-app'              // Replace with your ECR repository name
-        IMAGE_TAG = 'latest'                          // Replace with desired Docker image tag
+        AWS_ACCOUNT_ID = '156041404525'                // Replace with your AWS Account ID
+        REPO_NAME = 'my-calculator-app'                // Replace with your ECR repository name
+        IMAGE_TAG = 'latest'                           // Replace with desired Docker image tag
     }
 
     stages {
@@ -19,7 +19,7 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'pip install -r requirements.txt'
+                sh 'pip install -r infrastructure/requirements.txt'
             }
         }
 
