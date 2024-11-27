@@ -6,9 +6,6 @@ pipeline {
             steps {
                 script {
                     sh '#!/bin/bash'
-                    sh 'echo $SHELL'
-                    sh 'cd calculator-app && echo "Now inside calculator-app"'
-                    sh 'ls -l'
                     sh 'pytest test_calculator.py'
                 }
             }
