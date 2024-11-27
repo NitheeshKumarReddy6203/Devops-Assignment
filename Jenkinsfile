@@ -5,7 +5,8 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    sh 'cd calculator-app/tests | pytest test_calculator.py'
+                    sh 'cd calculator-app/tests' 
+                    sh 'pytest test_calculator.py'
                 }
             }
         }
