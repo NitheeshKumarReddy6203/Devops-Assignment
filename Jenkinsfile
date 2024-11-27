@@ -6,6 +6,7 @@ pipeline {
             steps {
                 script {
                     sh 'cd calculator-app/tests' 
+                    sh 'pwd'
                     sh 'pytest test_calculator.py'
                 }
             }
