@@ -1,9 +1,8 @@
 import sys
 import os
 import unittest
-
-# Add the src directory to the Python path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
+sys.path.append('/var/lib/jenkins/workspace/Devops-Assignment/calculator-app/src')
+import calculator
 
 # Import the functions
 from calculator import add, subtract, multiply
