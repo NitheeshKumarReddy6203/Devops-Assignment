@@ -18,7 +18,7 @@ pipeline {
             steps {
                 script {
                     echo "Running unit tests..."
-                    sh "python3 -m unittest discover -s tests"
+                    sh "python3 -m unittest discover -s tests -p '*.py'"
                 }
             }
         }
