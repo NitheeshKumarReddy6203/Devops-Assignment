@@ -5,8 +5,8 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    sh 'cd calculator-app' 
-                    sh 'pwd'
+                    sh 'echo $SHELL'
+                    sh 'cd calculator-app && echo "Now inside calculator-app"'
                     sh 'ls -l'
                     sh 'pytest test_calculator.py'
                 }
