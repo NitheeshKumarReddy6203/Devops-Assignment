@@ -1,7 +1,7 @@
 import sys
 import os
 import unittest
-from ..src import calculator
+import calculator
 
 # Import the functions
 from calculator import add, subtract, multiply
