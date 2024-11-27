@@ -1,43 +1,31 @@
 pipeline {
     agent any
-    environment {
-        AWS_REGION = 'ap-south-1' 
-    }
+
     stages {
-        stage('Build Docker Image') {
+        stage('Install Dependencies') {
             steps {
                 script {
-                    def imageTag = "my-app:${BUILD_NUMBER}"
-                    echo "Building Docker image with tag: ${imageTag}"
-                    sh "docker build -t ${imageTag} ."
+                    sh 'pip3 install --no-cache-dir -r requirements.txt'
                 }
             }
         }
-        
+
         stage('Run Unit Tests') {
             steps {
                 script {
-                    echo "Running unit tests..."
-                    sh "python3 -m unittest discover -s tests -p '*.py'"
+                    // Check directory structure
+                    sh 'pwd && ls -R'
+
+                    // Run the tests
+                    sh 'python3 -m unittest discover -s ./tests -p "*.py"'
                 }
             }
         }
-        
+
         stage('Echo Success') {
             steps {
-                echo "Pipeline executed successfully up to unit tests."
+                echo 'Pipeline ran successfully!'
             }
-        }
-    }
-    post {
-        always {
-            echo 'Pipeline finished.'
-        }
-        success {
-            echo 'Pipeline completed successfully.'
-        }
-        failure {
-            echo 'Pipeline failed.'
         }
     }
 }
