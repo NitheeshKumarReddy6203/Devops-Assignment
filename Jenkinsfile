@@ -23,7 +23,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    withCredentials([awsCredentials(credentialsId: 'ecr-creds')]) {
+                    withAWS(credentials: 'ecr-creds') {
                         sh '''
                             # Authenticate Docker with ECR
                             aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
@@ -42,7 +42,7 @@ pipeline {
         stage('Push Docker Image to ECR') {
             steps {
                 script {
-                    withCredentials([awsCredentials(credentialsId: 'ecr-creds')]) {
+                   withAWS(credentials: 'ecr-creds') {
                         sh '''
                             # Push Docker image to ECR
                             docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG
