@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         // Define the ECR repository name and AWS region
-        ECR_REPO = 'your-ecr-repository-name'
+        ECR_REPO = 'my-calculator-app'
         AWS_REGION = 'ap-south-1'
         IMAGE_TAG = "${env.BUILD_ID}"  // Tag Docker image with the build ID
     }
