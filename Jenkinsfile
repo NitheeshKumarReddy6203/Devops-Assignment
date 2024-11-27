@@ -7,9 +7,23 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout SCM') {
             steps {
-                git 'https://github.com/your-username/your-repository.git'
+                script {
+                    // Checkout the Git repository using credentials stored in Jenkins
+                    checkout scm: [
+                        $class: 'GitSCM',
+                        branches: [[name: '*/main']], // Specify the branch you want to check out
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [],
+                        userRemoteConfigs: [
+                            [
+                                url: 'https://github.com/NitheeshKumarReddy6203/Devops-Assignment.git', // Your GitHub repo URL
+                                credentialsId: 'CredsTemp' // The credentials ID for the Personal Access Token
+                            ]
+                        ]
+                    ]
+                }
             }
         }
 
