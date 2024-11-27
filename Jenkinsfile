@@ -2,14 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
-            steps {
-                // Checkout the code from GitHub
-                git url: 'https://github.com/NitheeshKumarReddy6203/Devops-Assignment.git'
-                echo "Checkout is Sucessful!"
-            }
-        }
-
         stage('Run Tests') {
             steps {
                 script {
