@@ -24,7 +24,8 @@ pipeline {
         }
         stage('Run Tests') {
             steps {
-                sh '~/.local/bin/pytest tests/ --junitxml=results.xml'
+                ~/.local/bin/pytest $WORKSPACE/tests/ --junitxml=results.xml
+
             }
         }
 
