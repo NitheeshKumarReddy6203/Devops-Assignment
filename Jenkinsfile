@@ -2,58 +2,33 @@ pipeline {
     agent any
 
     environment {
-        // Define the ECR repository name and AWS region
-        ECR_REPO = 'my-calculator-app'
-        AWS_REGION = 'ap-south-1'
-        IMAGE_TAG = "${env.BUILD_ID}"  // Tag Docker image with the build ID
+        PYTHON_HOME = '/usr/bin/python3'  // Adjust if necessary
     }
 
     stages {
-        stage('Checkout SCM') {
+        stage('Checkout') {
             steps {
-                // Checkout the code from GitHub
-                git url: 'https://github.com/NitheeshKumarReddy6203/Devops-Assignment.git'
+                checkout scm  // Checkout the code from the repository
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    // Install necessary dependencies
+                    sh '''
+                        pip install -r requirements.txt
+                    '''
+                }
             }
         }
 
         stage('Run Tests') {
             steps {
-                // Run unit tests (using pytest, or you can adjust to your test framework)
                 script {
-                    sh 'pytest tests/test_calculator.py --maxfail=1 --disable-warnings -q'
-                }
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    // Build Docker image with the tag specified in IMAGE_TAG
+                    // Run the test cases using pytest
                     sh '''
-                    docker build -t ${ECR_REPO}:${IMAGE_TAG} .
-                    '''
-                }
-            }
-        }
-
-        stage('Login to ECR') {
-            steps {
-                script {
-                    // Get login credentials for ECR and login to ECR
-                    sh '''
-                    aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}.dkr.ecr.${AWS_REGION}.amazonaws.com
-                    '''
-                }
-            }
-        }
-
-        stage('Push to ECR') {
-            steps {
-                script {
-                    // Tag the image and push to ECR
-                    sh '''
-                    docker tag ${ECR_REPO}:${IMAGE_TAG} ${ECR_REPO}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${IMAGE_TAG}
-                    docker push ${ECR_REPO}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${IMAGE_TAG}
+                        pytest --maxfail=1 --disable-warnings -q
                     '''
                 }
             }
@@ -62,14 +37,8 @@ pipeline {
 
     post {
         always {
-            // Clean up workspace after build
+            // Clean up workspace if necessary
             cleanWs()
-        }
-        success {
-            echo "Build and Push to ECR was successful."
-        }
-        failure {
-            echo "Build failed. Check logs for details."
         }
     }
 }
