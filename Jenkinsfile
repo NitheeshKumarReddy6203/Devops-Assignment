@@ -6,7 +6,7 @@ pipeline {
             steps {
                 // Checkout the code from GitHub
                 git url: 'https://github.com/NitheeshKumarReddy6203/Devops-Assignment.git'
-                echo "Checkout is Suceessful!"
+                echo "Checkout is Sucessful!"
             }
         }
 
