@@ -62,23 +62,23 @@ pipeline {
             }
         }
 
-        // Add the SAM Deployment Stage here
-        stage('Deploy to AWS Lambda') {
+        stage('SAM Deployment') {
             steps {
                 script {
-                    // Deploy using AWS SAM and pass the image tag
                     sh """
-                        sam deploy --config-file samconfig.toml \
-                        --parameter-overrides ParameterKey=ImageTag,ParameterValue=${IMAGE_TAG}
+                        sed -i 's/image_tag = "latest"/image_tag = "${IMAGE_TAG}"/' samconfig.toml
+                    """
+                    sh """
+                        sam deploy --config-file samconfig.toml --parameter-overrides ImageTag=${IMAGE_TAG}
                     """
                 }
             }
         }
+
     }
 
     post {
         always {
-            // Cleanup: Logout from Docker registry
             sh 'docker logout'
         }
     }
