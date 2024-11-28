@@ -7,10 +7,9 @@ Parameters:
 
 Resources:
   MyLambdaFunction:
-    Type: AWS::Lambda::Function
+    Type: AWS::Serverless::Function
     Properties:
-      FunctionName: my-lambda-function
       PackageType: Image
-      ImageUri: !Sub "156041404525.dkr.ecr.${AWS::Region}.amazonaws.com/my-calculator-app:${ImageTag}"
-      MemorySize: 512
-      Timeout: 60
+      ImageUri: !Sub "${ECR_REGISTRY}/${ECR_REPO}:${ImageTag}"
+      Timeout: 30
+      MemorySize: 128
