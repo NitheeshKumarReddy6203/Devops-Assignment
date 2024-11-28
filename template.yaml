@@ -1,8 +1,9 @@
+AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
   ImageTag:
     Type: String
     Default: "latest"
-    Description: "Docker image tag for the Lambda function"
+    Description: "The tag of the Docker image for the Lambda function"
 
 Resources:
   MyLambdaFunction:
@@ -10,4 +11,6 @@ Resources:
     Properties:
       FunctionName: my-lambda-function
       PackageType: Image
-      ImageUri: !Sub "${AWS::AccountId}.dkr.ecr.${AWS_REGION}.amazonaws.com/my-calculator-app:${ImageTag}"
+      ImageUri: !Sub "156041404525.dkr.ecr.${AWS::Region}.amazonaws.com/my-calculator-app:${ImageTag}"
+      MemorySize: 512
+      Timeout: 60
