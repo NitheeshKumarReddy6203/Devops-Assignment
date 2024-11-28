@@ -58,14 +58,19 @@ pipeline {
         stage('SAM Deployment') {
             steps {
                 script {
-                    sh """
-                        sam deploy --config-file samconfig.toml --template-file template.yaml \
-                                   --parameter-overrides ImageTag=${IMAGE_TAG}
-                    """
+                    withCredentials([usernamePassword(credentialsId: 'ecrcreds', 
+                                                      usernameVariable: 'AWS_ACCESS_KEY_ID', 
+                                                      passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                        sh """
+                            sam deploy --config-file samconfig.toml \
+                                       --template-file template.yaml \
+                                       --parameter-overrides ImageTag=${IMAGE_TAG}
+                        """
+                    }
                 }
             }
         }
-    }
+
 
     post {
         always {
