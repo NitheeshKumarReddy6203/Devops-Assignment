@@ -8,19 +8,13 @@ pipeline {
     }
 
     stages {
-        stage('Login to ECR') {
+        stage('Run Unit Tests') {
             steps {
                 script {
-                    // Use Jenkins credentials for AWS access
-                    withCredentials([usernamePassword(credentialsId: 'ecr-creds', passwordVariable: 'AWS_SECRET_KEY', usernameVariable: 'AWS_ACCESS_KEY')]) {
-                        // Set the AWS credentials for CLI to use
-                        withEnv(["AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY}", "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_KEY}"]) {
-                            // Get ECR login password and authenticate Docker to the ECR registry
-                            sh """
-                                aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO_URI}
-                            """
-                        }
-                    }
+                    sh '''
+                        # Run unit tests
+                        python3 -m unittest discover -s . -p "test_calculator.py"
+                    '''
                 }
             }
         }
