@@ -61,6 +61,19 @@ pipeline {
                 }
             }
         }
+
+        // Add the SAM Deployment Stage here
+        stage('Deploy to AWS Lambda') {
+            steps {
+                script {
+                    // Deploy using AWS SAM and pass the image tag
+                    sh """
+                        sam deploy --config-file samconfig.toml \
+                        --parameter-overrides ParameterKey=ImageTag,ParameterValue=${IMAGE_TAG}
+                    """
+                }
+            }
+        }
     }
 
     post {
