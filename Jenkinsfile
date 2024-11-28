@@ -70,7 +70,6 @@ pipeline {
                                                              ParameterKey=ECR_REPO,ParameterValue=my-calculator-app \
                                                              ParameterKey=ECR_REGISTRY,ParameterValue=156041404525.dkr.ecr.ap-south-1.amazonaws.com \
                                        --image-repositories MyLambdaFunction=156041404525.dkr.ecr.ap-south-1.amazonaws.com/my-calculator-app
-
                         """
                     }
                 }
