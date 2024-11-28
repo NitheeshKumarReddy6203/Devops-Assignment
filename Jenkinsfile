@@ -67,12 +67,15 @@ pipeline {
                             sam deploy --config-file samconfig.toml \
                                        --template-file template.yaml \
                                        --parameter-overrides ImageTag=${IMAGE_TAG} \
+                                                             ECR_REPO=${ECR_REPO} \
+                                                             ECR_REGISTRY=${ECR_REGISTRY} \
                                        --image-repositories MyLambdaFunction=${ECR_REGISTRY}/${ECR_REPO}
                         """
                     }
                 }
             }
         }
+
     }
 
     post {
