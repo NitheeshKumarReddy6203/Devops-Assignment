@@ -68,12 +68,14 @@ pipeline {
                     sh """
                         sed -i 's/image_tag = "latest"/image_tag = "${IMAGE_TAG}"/' samconfig.toml
                     """
+                    
                     sh """
-                        sam deploy --config-file samconfig.toml --parameter-overrides ImageTag=${IMAGE_TAG}
+                        sam deploy --config-file samconfig.toml --template-file template.yaml --parameter-overrides ImageTag=${IMAGE_TAG}
                     """
                 }
             }
         }
+
 
     }
 
