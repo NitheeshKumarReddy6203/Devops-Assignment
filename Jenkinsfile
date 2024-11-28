@@ -66,10 +66,11 @@ pipeline {
                         sh """
                             sam deploy --config-file samconfig.toml \
                                        --template-file template.yaml \
-                                       --parameter-overrides ImageTag=111 \
+                                       --parameter-overrides ImageTag=v1.0.0 \
                                                              ECR_REPO=my-calculator-app \
                                                              ECR_REGISTRY=156041404525.dkr.ecr.ap-south-1.amazonaws.com \
                                        --image-repositories MyLambdaFunction=156041404525.dkr.ecr.ap-south-1.amazonaws.com/my-calculator-app
+
                         """
                     }
                 }
