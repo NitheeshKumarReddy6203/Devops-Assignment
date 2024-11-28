@@ -38,7 +38,9 @@ pipeline {
         stage('Login to ECR') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'ecrcreds', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                    withCredentials([usernamePassword(credentialsId: 'ecrcreds', 
+                                                      passwordVariable: 'AWS_SECRET_ACCESS_KEY', 
+                                                      usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
                         sh """
                             aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}
                         """
@@ -70,7 +72,7 @@ pipeline {
                 }
             }
         }
-
+    }
 
     post {
         always {
