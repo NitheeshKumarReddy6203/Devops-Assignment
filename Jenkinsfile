@@ -64,13 +64,12 @@ pipeline {
                                                       usernameVariable: 'AWS_ACCESS_KEY_ID', 
                                                       passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                         sh """
-                            sam deploy --config-file samconfig.toml \
-                                       --template-file template.yaml \
-                                       --parameter-overrides ImageTag=v1.0.0 \
-                                                             ECR_REPO=my-calculator-app \
-                                                             ECR_REGISTRY=156041404525.dkr.ecr.ap-south-1.amazonaws.com \
-                                       --image-repositories MyLambdaFunction=156041404525.dkr.ecr.ap-south-1.amazonaws.com/my-calculator-app
-
+                                sam deploy --config-file samconfig.toml \
+                                           --template-file template.yaml \
+                                           --parameter-overrides ParameterKey=ImageTag,ParameterValue=${IMAGE_TAG} \
+                                                                 ParameterKey=ECR_REPO,ParameterValue=${ECR_REPO} \
+                                                                 ParameterKey=ECR_REGISTRY,ParameterValue=${ECR_REGISTRY} \
+                                           --image-repositories MyLambdaFunction=${ECR_REGISTRY}/${ECR_REPO}
                         """
                     }
                 }
