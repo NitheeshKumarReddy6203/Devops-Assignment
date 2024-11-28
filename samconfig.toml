@@ -7,3 +7,4 @@ s3_prefix = "calculator-app"
 region = "ap-south-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
+parameter_overrides = "ImageUri=156041404525.dkr.ecr.ap-south-1.amazonaws.com/my-calculator-app:106"
