@@ -3,8 +3,9 @@ pipeline {
 
     environment {
         AWS_REGION = 'ap-south-1'  // Replace with your region
-        ECR_REPO_URI = '156041404525.dkr.ecr.ap-south-1.amazonaws.com/my-calculator-repo'  // Replace with your ECR repo URI
-        IMAGE_NAME = 'my-calculator-app'  // Replace with your Docker image name
+        ECR_REPO = 'my-calculator-app'  // ECR repository name
+        IMAGE_TAG = "${BUILD_NUMBER}"  // Build number as image tag
+        ECR_REGISTRY = '156041404525.dkr.ecr.ap-south-1.amazonaws.com'  // ECR registry URI
     }
 
     stages {
@@ -23,7 +24,7 @@ pipeline {
             steps {
                 script {
                     // Build Docker image
-                    sh "docker build -t ${IMAGE_NAME} ."
+                    sh "docker build -t ${ECR_REPO} ."
                 }
             }
         }
@@ -32,7 +33,22 @@ pipeline {
             steps {
                 script {
                     // Tag Docker image with the ECR repository URI
-                    sh "docker tag ${IMAGE_NAME}:latest ${ECR_REPO_URI}:${BUILD_NUMBER}"
+                    sh "docker tag ${ECR_REPO}:latest ${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG}"
+                }
+            }
+        }
+
+        stage('Login to ECR') {
+            steps {
+                script {
+                    // Login to Amazon ECR
+                    withCredentials([usernamePassword(credentialsId: 'ecr-repo', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                        withEnv(["AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}", "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"]) {
+                            sh """
+                                aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}
+                            """
+                        }
+                    }
                 }
             }
         }
@@ -41,7 +57,7 @@ pipeline {
             steps {
                 script {
                     // Push the Docker image to the ECR repository
-                    sh "docker push ${ECR_REPO_URI}:${BUILD_NUMBER}"
+                    sh "docker push ${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG}"
                 }
             }
         }
