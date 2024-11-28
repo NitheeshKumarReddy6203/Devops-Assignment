@@ -67,7 +67,7 @@ pipeline {
                             sam deploy --config-file samconfig.toml \
                                        --template-file template.yaml \
                                        --parameter-overrides ParameterKey=ImageTag,ParameterValue=${IMAGE_TAG} \
-                                                             ParameterKey=ECRREPO,ParameterValue=${ECR_REPO} \
+                                                             ParameterKey=ECR_REPO_NAME_ALPHANUMERIC,ParameterValue=${ECR_REPO} \
                                                              ParameterKey=ECR_REGISTRY,ParameterValue=${ECR_REGISTRY} \
                                        --image-repositories MyLambdaFunction=${ECR_REGISTRY}/${ECR_REPO}
 
