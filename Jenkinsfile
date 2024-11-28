@@ -66,8 +66,7 @@ pipeline {
                         sh """
                             sam deploy --config-file samconfig.toml \
                                        --template-file template.yaml \
-                                       --parameter-overrides ImageTag=${IMAGE_TAG} \
-                                       --image-uri ${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG}
+                                       --parameter-overrides ImageTag=${IMAGE_TAG}
                         """
                     }
                 }
