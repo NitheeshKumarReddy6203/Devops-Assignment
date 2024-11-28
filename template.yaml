@@ -1,10 +1,14 @@
 AWSTemplateFormatVersion: '2010-09-09'
-
 Parameters:
   ImageTag:
     Type: String
-    Default: "latest"
-    Description: "The tag of the Docker image for the Lambda function"
+    Description: The Docker image tag for the Lambda function
+  ECR_REPO:
+    Type: String
+    Description: The ECR repository name for the Lambda function
+  ECR_REGISTRY:
+    Type: String
+    Description: The ECR registry URI for the Lambda function
 
 Resources:
   MyLambdaFunction:
