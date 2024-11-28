@@ -1,0 +1,13 @@
+Parameters:
+  ImageTag:
+    Type: String
+    Default: "latest"
+    Description: "Docker image tag for the Lambda function"
+
+Resources:
+  MyLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: my-lambda-function
+      PackageType: Image
+      ImageUri: !Sub "${AWS::AccountId}.dkr.ecr.${AWS_REGION}.amazonaws.com/my-calculator-app:${ImageTag}"
