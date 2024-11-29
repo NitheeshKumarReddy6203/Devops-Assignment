@@ -1,12 +1,13 @@
 AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
 Parameters:
   ImageTag:
     Type: String
     Description: The Docker image tag for the Lambda function
-  ECRRepoName:  # Valid alphanumeric name
+  ECRRepoName:
     Type: String
     Description: The ECR repository name for the Lambda function
-  ECRRegistry:  # Valid alphanumeric name
+  ECRRegistry:
     Type: String
     Description: The ECR registry URI for the Lambda function
 
