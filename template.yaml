@@ -3,10 +3,10 @@ Parameters:
   ImageTag:
     Type: String
     Description: The Docker image tag for the Lambda function
-  ECR_REPO_NAME_ALPHANUMERIC:  # Changed to a valid alphanumeric name
+  ECRRepoName:  # Valid alphanumeric name
     Type: String
     Description: The ECR repository name for the Lambda function
-  ECR_REGISTRY:
+  ECRRegistry:  # Valid alphanumeric name
     Type: String
     Description: The ECR registry URI for the Lambda function
 
@@ -15,6 +15,6 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       PackageType: Image
-      ImageUri: !Sub "${ECR_REGISTRY}/${ECR_REPO_NAME_ALPHANUMERIC}:${ImageTag}"
+      ImageUri: !Sub "${ECRRegistry}/${ECRRepoName}:${ImageTag}"
       Timeout: 30
       MemorySize: 128
