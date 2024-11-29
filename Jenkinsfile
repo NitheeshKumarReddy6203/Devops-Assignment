@@ -69,7 +69,8 @@ pipeline {
                                        --parameter-overrides ParameterKey=ImageTag,ParameterValue=${IMAGE_TAG} \
                                                              ParameterKey=ECRRepoName,ParameterValue=${ECR_REPO} \
                                                              ParameterKey=ECRRegistry,ParameterValue=${ECR_REGISTRY} \
-                                       --image-repositories MyLambdaFunction=${ECR_REGISTRY}/${ECR_REPO}
+                                       --image-repositories MyLambdaFunction=${ECR_REGISTRY}/${ECR_REPO} \
+                                       --no-confirm-changeset
                         """
                     }
                 }
